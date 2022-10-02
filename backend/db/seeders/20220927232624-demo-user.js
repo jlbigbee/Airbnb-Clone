@@ -1,31 +1,59 @@
 'use strict';
 const bcrypt = require("bcryptjs");
+const { Op } = require("sequelize");
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Users', [
-      {
-        email: 'demo@user.io',
-        username: 'Demo-lition',
-        hashedPassword: bcrypt.hashSync('password')
-      },
-      {
-        email: 'user1@user.io',
-        username: 'FakeUser1',
-        hashedPassword: bcrypt.hashSync('password2')
-      },
-      {
-        email: 'user2@user.io',
-        username: 'FakeUser2',
-        hashedPassword: bcrypt.hashSync('password3')
-      }
-    ], {});
-  },
+    up: async (queryInterface, Sequelize) => {
+        return queryInterface.bulkInsert('Users', [
+            {
+                firstName: 'Jonathan',
+                lastName: 'Blubee',
+                email: 'jbee@user.io',
+                username: 'jbluebee',
+                hashedPassword: bcrypt.hashSync('bigbeefs')
+            },
+            {
+                firstName: 'Jackie',
+                lastName: 'Junebug',
+                email: 'jjunebug@user.io',
+                username: 'jjunebug',
+                hashedPassword: bcrypt.hashSync('junebuggies')
+            },
+            {
+                firstName: 'Sammy',
+                lastName: 'Samslug',
+                email: 'sammyslug@user.io',
+                username: 'sirslimes',
+                hashedPassword: bcrypt.hashSync('sliminaround')
+            },
+            {
+                firstName: 'Cathy',
+                lastName: 'Catter',
+                email: 'ilovecats@user.io',
+                username: 'cattercats',
+                hashedPassword: bcrypt.hashSync('rollitup')
+            },
+            {
+                firstName: 'Barry',
+                lastName: 'Butterfly',
+                email: 'Barrybutts@user.io',
+                username: 'bbbutterflies',
+                hashedPassword: bcrypt.hashSync('flowersarepretty')
+            }
+        ], {});
+    },
 
-  down: async (queryInterface, Sequelize) => {
-    const Op = Sequelize.Op;
-    return queryInterface.bulkDelete('Users', {
-      username: { [Op.in]: ['Demo-lition', 'FakeUser1', 'FakeUser2'] }
-    }, {});
-  }
+    down: async (queryInterface, Sequelize) => {
+      return queryInterface.bulkDelete('Users', {
+        username: {
+          [Op.in]: [
+              'jbluebee',
+              'jjunebug',
+              'sirslimes',
+              'cattercats',
+              'bbbutterflies',
+              ]
+          }
+        }, {});
+    }
 };
