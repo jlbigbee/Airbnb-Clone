@@ -123,8 +123,6 @@ router.get('/', async (req, res, next) => {
        ...pagination
     });
 
-    let spotsArray = [];
-
     for(let i = 0; i< allSpots.length; i++){
       const spot = allSpots[i];
 
@@ -135,51 +133,58 @@ router.get('/', async (req, res, next) => {
       spot.avgRating = avgRating / numReviews
     } else spot.avgRating = null;
 
-    const spotImage = await SpotImage.findAll({
+    const spotImages = await SpotImage.findAll({
         where:{spotId: spot.id}, limit:1, raw:true, preview:true
     });
 
-    if (spotImage[0]) {
-        spot.previewImage = spotImage[0]
+    if (spotImages[0]) {
+        spot.previewImage = spotImages[0]
     } else spot.spotImage = null;
 
     };
-
-    spotsArray.push
 
     return res.json({Spots: allSpots, page, size});
 
 });
 
+//Create a Spot
+router.post('/', requireAuth, validateSpot, async (req, res, next) => {
+    const { address, city, state, country, lat, lng, name, description, price } = req.body;
+    const ownerId = req.user.id
+
+    const newSpot = await Spot.create({ ownerId: ownerId, address, city, state, country, lat, lng, name, description, price })
+
+    res.json(newSpot);
+
+ })
+
+//Add an image to Spot based on Spot's id
+router.post('/:spotId/images', requireAuth, async (req, res, next) => {
+    const spot = await Spot.findByPk(req.params.spotId)
+
+    if (!spot) {
+        const err = new Error()
+        err.message = "Spot not found"
+        err.status = 404
+        return res.json(err)
+    }
+    if (req.user.id !== spot.ownerId) {
+        const err = new Error()
+        err.message = "Must be owner to add image"
+        err.status = 403
+        return res.json(err)
+    }
+
+    const { url, preview } = req.body
+    const image = await SpotImage.create({spotId: req.params.spotId, url, preview})
+    const imageData = await SpotImage.findByPk(image.id, {
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'reviewId', 'spotId']
+        }
+    })
+    return res.json(imageData)
+})
+
+
 
 module.exports = router;
-
-
-
-
-
-
-
-    //   let avgRating = await Review.findByPk(currentId, {
-    //       attributes: [[sequelize.fn('AVG', sequelize.col("stars")), 'avgRating']]
-    //   })
-    //   const rawAvgRating = avgRating.dataValues.avgRating;
-    //   spotObj.avgRating = Number.parseInt(rawAvgRating).toFixed(1);
-
-    //   const previewImageUrl = await SpotImage.findAll({
-    //       where: { spotId: currentId, preview: true },
-    //       attributes: ['url'],
-    //       limit: 1
-    //   })
-
-    //   if (previewImageUrl[0]) {
-    //     spotObj.prevewImage = previewImageUrl[0].url
-    //   } else {
-    //     spotObj.prevewImage = null;
-    //   }
-
-    //   spotsArr.push(spotObj)
-    // }
-
-
-    // return res.json({ Spots: spotsArray, page, size});
