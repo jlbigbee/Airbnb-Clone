@@ -242,6 +242,34 @@ router.get('/:spotId', async (req, res, next) => {
 
 });
 
+//Edit a Spot
+router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
+    const spot = await Spot.findByPk(parseInt(req.params.spotId));
+    const { address, city, state, country, lat, lng, name, description, price } = req.body;
+
+  if (!spot) {
+    return res.status(404)
+    .json({
+      "message": "Spot couldn't be found",
+      "statusCode": 404
+    })
+  }
+
+  if(spot.ownerId !== req.user.id){
+    return res.status(403)
+        .json({
+        "message": "Request denied: You are not the owner of this spot.",
+        "statusCode": 403
+    });
+}
+
+spot.update({ address, city, state, country, lat, lng, name, description, price });
+return res.json(spot);
+
+})
+
+
+
 
 
 
