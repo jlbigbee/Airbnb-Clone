@@ -123,27 +123,32 @@ router.get('/', async (req, res, next) => {
        ...pagination
     });
 
-    for(let i = 0; i< allSpots.length; i++){
-      const spot = allSpots[i];
+    const spotRes = [];
 
-      const numReviews = await Review.count({ where: { spotId: spot.id } });
-      const avgRating = await Review.sum('stars', { where: { spotId: spot.id } });
+    for (let i = 0; i < allSpots.length; i++) {
+      let currentSpot = allSpots[i].toJSON();
 
-      if (numReviews > 0 && avgRating > 0) {
-      spot.avgRating = avgRating / numReviews
-    } else spot.avgRating = null;
+      const reviewSum = await Review.sum('stars', {where: { spotId: currentSpot.id }})
+      const reviewNum = await Review.count({where: { spotId: currentSpot.id }});
 
-    const spotImages = await SpotImage.findAll({
-        where:{spotId: spot.id}, limit:1, raw:true, preview:true
-    });
+      if (!reviewSum) {
+        currentSpot.avgRating = null
+      } else {
+        currentSpot.avgRating = (reviewSum / reviewNum)
+      };
 
-    if (spotImages[0]) {
-        spot.previewImage = spotImages[0]
-    } else spot.spotImage = null;
+      const prevImage = await SpotImage.findOne({where: {preview: true, spotId: currentSpot.id}});
 
-    };
+      if (!prevImage) {
+        currentSpot.previewImage = 'no image'
+      } else {
+        currentSpot.previewImage = prevImage.url
+      };
 
-    return res.json({Spots: allSpots, page, size});
+      spotRes.push(currentSpot);
+    }
+
+    return res.json({ Spots: spotRes, page, size });
 
 });
 
@@ -369,7 +374,7 @@ router.post('/:spotId/bookings', requireAuth, async (req, res, next) => {
 
     if (startDateCheck || endDateCheck) {
         const err = new Error()
-        err.message = "Sorry, this spot is already booked for the specified dates"
+        err.message = "Spot is booked for specified dates"
         err.status = 403
         err.errors = {
             startDate: 'Start date conflicts with an existing booking',
@@ -435,7 +440,27 @@ router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
     }
 })
 
-
+//delete a spot
+router.delete('/:spotId', requireAuth, async (req, res, next) => {
+    const spot = await Spot.findByPk(req.params.spotId)
+    if (!spot) {
+        const err = new Error()
+        err.message = "Spot not found"
+        err.status = 404
+        return next(err)
+    }
+    if (req.user.id !== spot.ownerId) {
+        const err = new Error()
+        err.message = "Must be owner to delete spot"
+        err.status = 401
+        return next(err)
+    }
+    await spot.destroy()
+    return res.json({
+        message: "Successfully Deleted",
+        statusCode: 200
+    })
+})
 
 
 module.exports = router;

@@ -43,8 +43,42 @@ router.get('/current', requireAuth, async (req, res, next) => {
 })
 
 //edit a booking
+router.get('/current', requireAuth, async (req, res, next) => {
+
+    const bookings = await Booking.findAll({
+        where: {
+            userId: req.user.id
+        },
+        include: [
+            {
+                model: Spot,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'description']
+                }
+            }
+        ]
+    })
+
+    const bookingArr = []
+    for (let booking of bookings) {
+        const spot = await Spot.findByPk(booking.spotId)
+        const spotImage = await SpotImage.findByPk(spot.id, {
+            where: {
+                preview: true
+            }
+        })
+
+        let bookingData = booking.toJSON()
+        bookingData.Spot.previewImage = spotImage.url
+        bookingArr.push(bookingData)
+    }
+
+    return res.json({ Bookings: bookingArr })
+})
+
+//edit a booking
 router.put('/:bookingId', requireAuth, async (req, res, next) => {
-    const userId = req.user.id
+
     const booking = await Booking.findByPk(req.params.bookingId)
 
     if (!booking) {
@@ -54,7 +88,7 @@ router.put('/:bookingId', requireAuth, async (req, res, next) => {
         return next(err)
     }
 
-    if (userId !== booking.userId) {
+    if (req.user.id !== booking.userId) {
         const err = new Error()
         err.message = "Must be owner to edit booking"
         err.status = 404
@@ -72,6 +106,7 @@ router.put('/:bookingId', requireAuth, async (req, res, next) => {
         err.status = 400
         return next(err)
     }
+
     const startDateCheck = await Booking.findOne({
         where: {
             startDate: startDate
@@ -85,7 +120,7 @@ router.put('/:bookingId', requireAuth, async (req, res, next) => {
 
     if (startDateCheck || endDateCheck) {
         const err = new Error()
-        err.message = "Sorry, this spot is already booked for the specified dates"
+        err.message = "Spot is booked for specified dates"
         err.status = 403
         err.errors = {
             startDate: 'Start date conflicts with an existing booking',
@@ -94,10 +129,48 @@ router.put('/:bookingId', requireAuth, async (req, res, next) => {
         return next(err)
     }
 
-    booking.update({ startDate, endDate})
+    booking.update({startDate, endDate})
 
     return res.json(booking)
 
+})
+
+
+//delete a booking
+router.delete('/:bookingId', requireAuth, async (req, res, next) => {
+
+    const booking = await Booking.findByPk(req.params.bookingId)
+
+    if (!booking) {
+        const err = new Error()
+        err.message = "Booking not found"
+        err.status = 404
+        return next(err)
+    }
+
+    if (req.user.id !== booking.userId) {
+        const err = new Error()
+        err.message = "Must be owner to delete booking"
+        err.status = 403
+        return next(err)
+    }
+
+    const currDateTime = new Date().getTime()
+    const startDateTime = new Date(booking.startDate).getTime()
+    if (currDateTime > startDateTime) {
+        const err = new Error()
+        err.message = "Booking has not started"
+        err.status = 403
+        return next(err)
+    }
+
+    await booking.destroy()
+
+
+    return res.json({
+        message: "Successfully deleted",
+        statusCode: 200
+    })
 })
 
 
