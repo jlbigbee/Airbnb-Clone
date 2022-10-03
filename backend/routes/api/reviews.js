@@ -87,6 +87,32 @@ router.get('/current', requireAuth, async (req, res, next) => {
     res.json({ Reviews: reviews });
 });
 
+//Edit a Review
+router.put('/:reviewId', [requireAuth, validateReview], async (req, res, next) => {
+    const { review, stars } = req.body
+    const editedReview = await Review.findByPk(req.params.reviewId)
+
+    if (!editedReview) {
+        const err = new Error()
+        err.message = "Review not found"
+        err.status = 404
+        return next(err)
+    }
+    if (req.user.id !== editedReview.userId) {
+        const err = new Error()
+        err.message = "Must be owner to edit review"
+        err.status = 401
+        return next(err)
+    }
+
+
+    editedReview.update({ review , stars})
+
+    return res.json(editedReview)
+});
+
+
+
 
 
 module.exports = router;

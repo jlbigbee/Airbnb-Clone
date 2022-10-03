@@ -295,12 +295,99 @@ router.post('/:spotId/reviews', [requireAuth, validateReview], async (req, res, 
     return res.json(newReview)
     })
 
+//Get all reviews by spot's id
 
+router.get('/:spotId/reviews', async (req, res, next) => {
+    const spot = await Spot.findByPk(req.params.spotId)
+    const reviews = await Review.findAll({
+        where: { spotId: req.params.spotId },
+        include: [
+            {
+                model: User,
+                attributes: {
+                    exclude: ['user', 'email', 'hashedPassword', 'token', 'createdAt', 'updatedAt', 'username']
+                }
+            },
+            {
+                model: ReviewImage,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'reviewId']
+                }
+            }
+        ]
+    })
+    if (!spot) {
+        const err = new Error()
+        err.message = "Spot not found"
+        err.status = 404
+        return next(err)
+    }
 
+    return res.json({ Reviews: reviews })
+})
+//create a booking from a spot based on the spots id
+router.post('/:spotId/bookings', requireAuth, async (req, res, next) => {
 
+    const spot = await Spot.findByPk(req.params.spotId)
 
+    if (!spot) {
+        const err = new Error()
+        err.message = "Spot not found"
+        err.status = 404
+        return next(err)
+    }
 
+    if (req.user.id === spot.ownerId) {
+        const err = new Error()
+        err.message = "Must not be owner to book"
+        err.status = 404
+        return next(err)
+    }
 
+    const { startDate, endDate } = req.body
+
+    const startDateTime = new Date(startDate).getTime()
+    const endDateTime = new Date(endDate).getTime()
+
+    if (endDateTime < startDateTime) {
+        const err = new Error()
+        err.message = "endDate can't be on or before startDate"
+        err.status = 400
+        return next(err)
+    }
+
+    const startDateCheck = await Booking.findOne({
+        where: {
+            startDate: startDate
+        }
+    })
+    const endDateCheck = await Booking.findOne({
+        where: {
+            endDate: endDate
+        }
+    })
+
+    if (startDateCheck || endDateCheck) {
+        const err = new Error()
+        err.message = "Sorry, this spot is already booked for the specified dates"
+        err.status = 403
+        err.errors = {
+            startDate: 'Start date conflicts with an existing booking',
+            endDate: 'End date conflicts with an existing booking',
+        }
+        return next(err)
+    }
+
+    const newBooking = await Booking.create({
+        userId: req.user.id,
+        spotId: req.params.spotId,
+        startDate,
+        endDate
+    })
+
+    return res.json(newBooking)
+
+})
 
 
 
