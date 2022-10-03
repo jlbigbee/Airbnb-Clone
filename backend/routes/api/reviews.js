@@ -59,4 +59,34 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
 
 });
 
+//Get all Reviews of the Current User
+router.get('/current', requireAuth, async (req, res, next) => {
+    const reviews = await Review.findAll({ where: { userId: req.user.id }, raw: true });
+    const currUser = await User.findOne({ where: { id: req.user.id }, attributes: { exclude: ['username'] }, raw: true });
+
+    for (let i = 0; i < reviews.length; i++) {
+        const review = reviews[i];
+
+        const spotInfo = await Spot.findOne({
+             where: { id: review.spotId },
+             attributes: { exclude: ['createdAt', 'updatedAt'] },
+             raw: true
+        });
+        const spotPreviews = await SpotImage.findAll({ where: { spotId: spotInfo.id }, raw: true, preview:true, limit:1 });
+        spotPreviews.forEach(image => {spotInfo.previewImage = image.url});
+
+        if (!spotInfo.previewImage) spotInfo.previewImage = null;
+
+        const reviewImageInfo = await ReviewImage.findAll({ where: { reviewId: review.id }, attributes: ['id', 'url'], raw: true });
+
+        review.User = currUser;
+        review.Spot = spotInfo;
+        review.ReviewImages = reviewImageInfo;
+    };
+
+    res.json({ Reviews: reviews });
+});
+
+
+
 module.exports = router;
