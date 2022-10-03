@@ -186,5 +186,69 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
 })
 
 
+//Get all Spots owned by the Current User
+router.get('/current', requireAuth, async (req, res, next) => {
+    const userId = req.user.id;
+    const userSpots = await Spot.findAll({ where: { ownerId: userId }, raw: true });
+
+    for (let i = 0; i < userSpots.length; i++) {
+        const spot = userSpots[i];
+
+        const numReviews = await Review.count({ where: { spotId: spot.id } });
+        const ratingSum = await Review.sum('stars', { where: { spotId: spot.id } });
+
+        if (numReviews > 0 && ratingSum > 0) {
+            spot.avgRating = ratingSum / numReviews;
+        } else spot.avgRating = null;
+
+        const spotImages = await SpotImage.findAll({
+            where:{spotId: spot.id}, limit:1, raw:true, preview:true
+        });
+
+        if (spotImages[0]) {
+            spot.previewImage = spotImages[0]
+        } else spot.previewImage = null;
+
+    };
+
+    res.json({ Spots: userSpots });
+});
+
+//Get details of a Spot from an id
+router.get('/:spotId', async (req, res, next) => {
+    const currentSpotId = parseInt(req.params.spotId);
+    const spot = await Spot.findByPk(req.params.spotId)
+
+    if (!spot) {
+      return res.status(404)
+      .json({
+        "message": "Spot couldn't be found",
+        "statusCode": 404
+      })
+    }
+
+    const spotData = spot.toJSON();
+
+    spotData.numReviews = await Review.count({ where: { spotId: spot.id } });
+    const reviewSum = await Review.sum('stars', { where: { spotId: spot.id } });
+    spotData.avgStarRating = reviewSum / spotData.numReviews;
+    spotData.spotImages = await SpotImage.findAll({
+        where: { spotId: currentSpotId },
+        attributes: ['id', 'url', 'preview']
+    });
+    spotData.Owner = await User.findByPk(spot.ownerId, { attributes: ['id', 'firstName', 'lastName'] });
+
+    res.json(spotData);
+
+});
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
