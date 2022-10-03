@@ -247,26 +247,53 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
     const spot = await Spot.findByPk(parseInt(req.params.spotId));
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
 
-  if (!spot) {
+    if (!spot) {
     return res.status(404)
     .json({
-      "message": "Spot couldn't be found",
-      "statusCode": 404
+        "message": "Spot not found",
+        "statusCode": 404
     })
-  }
+    }
 
-  if(spot.ownerId !== req.user.id){
+    if(spot.ownerId !== req.user.id){
     return res.status(403)
         .json({
-        "message": "Request denied: You are not the owner of this spot.",
+        "message": "Must be owner to edit spot",
         "statusCode": 403
     });
-}
+    }
 
 spot.update({ address, city, state, country, lat, lng, name, description, price });
 return res.json(spot);
 
 })
+
+// Create a Review for a Spot based on the Spot's id
+router.post('/:spotId/reviews', [requireAuth, validateReview], async (req, res, next) => {
+    const { review, stars } = req.body
+    const spot = await Spot.findByPk(req.params.spotId)
+
+    if (!spot) {
+        const err = new Error()
+        err.message = "Spot not found"
+        err.status = 404
+        return next(err)
+    }
+
+    const reviewExits = await Review.findOne({where: {spotId: spot.id, userId: req.user.id}})
+
+    if (reviewExits) {
+        const err = new Error()
+        err.message = "A review already exists"
+        err.status = 403
+        return next(err)
+    }
+
+
+    const newReview = await Review.create({userId: req.user.id, spotId: spot.id, review, stars})
+
+    return res.json(newReview)
+    })
 
 
 
