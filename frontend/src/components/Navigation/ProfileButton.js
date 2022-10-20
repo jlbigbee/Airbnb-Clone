@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
-// import { useHistory } from 'react-router-dom';
+
 import * as sessionActions from '../../store/session';
 
+import './Navigation.css'
 
 function ProfileButton({ user }) {
-  // const history = useHistory();
+
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -32,20 +33,21 @@ function ProfileButton({ user }) {
   };
 
   return (
-    <>
-      <button onClick={openMenu}>
+    <div className="dropdown-box">
+      <button onClick={openMenu} className='profile-button'>
         <i className="fa-regular fa-user" />
       </button>
+
       {showMenu && (
         <ul className="profile-dropdown">
           <li>{user.username}</li>
           <li>{user.email}</li>
-          <li>
+          <div>
             <button onClick={logout}>Log Out</button>
-          </li>
+          </div>
         </ul>
       )}
-    </>
+    </div>
   );
 }
 

@@ -1,0 +1,30 @@
+.nav-ul {
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 0px;
+}
+
+.dropdown-box {
+    background-color: aqua;
+}
+
+.profile-dropdown {
+    background-color: greenyellow;
+}
+.profile-button {
+    margin-top: 5px;
+    height: 42px;
+    width: 78px;
+    border-radius: 20px;
+    border: 1px solid rgb(228, 0, 0);
+    background-color: white;
+
+    display: flex;
+    justify-content: space-around;
+  }
+
+.nav-box {
+    color: rgb(175, 211, 55);
+}

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import LoginFormModal from '../LoginFormModal'
 import './Navigation.css';
+// import Logo from '../Logo/Airbb-logo.svg';
 
 function Navigation({ isLoaded }){
   const sessionUser = useSelector(state => state.session.user);
@@ -24,14 +25,25 @@ function Navigation({ isLoaded }){
   }
 
   return (
-    <ul>
-      <li>
-        <NavLink exact to="/">
-            Home
-        </NavLink>
-        {isLoaded && sessionLinks}
+    <>
+    <ul className='nav-ul'>
+      <li className='nav-box'>
+
+        <ul>
+          <div>
+            {/* <NavLink exact to="/"><img src={Logo} alt="logo"/></NavLink> */}
+            <ProfileButton/>
+          </div>
+          <div>
+        <LoginFormModal/>
+        <NavLink to="/signup">Sign Up</NavLink>
+          </div>
+            {isLoaded && sessionLinks}
+
+        </ul>
       </li>
     </ul>
+    </>
   );
 }
 
