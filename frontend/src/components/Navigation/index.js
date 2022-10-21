@@ -2,47 +2,35 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
-import LoginFormModal from '../LoginFormModal'
+// import LoginFormModal from '../LoginFormModal'
 import './Navigation.css';
-// import Logo from '../Logo/Airbb-logo.svg';
+import logo from '../images/Airbb-logo.png';
 
 function Navigation({ isLoaded }){
   const sessionUser = useSelector(state => state.session.user);
 
-  let sessionLinks;
-  if (sessionUser) {
-    sessionLinks = (
-      <ProfileButton user={sessionUser} />
-    );
-  } else {
-    sessionLinks = (
-      <>
-        <LoginFormModal />
-        <NavLink to="/login">Log In</NavLink>
-        <NavLink to="/signup">Sign Up</NavLink>
-      </>
-    );
-  }
-
   return (
     <>
-    <ul className='nav-ul'>
-      <li className='nav-box'>
+    <div className='nav-ul'>
+      <div className='nav-box'>
 
-        <ul>
-          <div>
-            {/* <NavLink exact to="/"><img src={Logo} alt="logo"/></NavLink> */}
-            <ProfileButton/>
-          </div>
-          <div>
-        <LoginFormModal/>
-        <NavLink to="/signup">Sign Up</NavLink>
-          </div>
-            {isLoaded && sessionLinks}
 
-        </ul>
-      </li>
-    </ul>
+
+            <NavLink exact to="/">
+              <img src={logo} alt="logo" className='logo'/>
+            </NavLink>
+
+
+
+          <div className= 'nav-menu'>
+              {isLoaded &&
+            <ProfileButton user={sessionUser}/>}
+          </div>
+
+
+
+      </div>
+    </div>
     </>
   );
 }

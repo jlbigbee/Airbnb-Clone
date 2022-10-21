@@ -27,7 +27,7 @@ export const login = (user) => async (dispatch) => {
   });
   const data = await response.json();
   delete data.token;
-  // console.log(data);
+
   dispatch(setUser(data));
   return response;
 };

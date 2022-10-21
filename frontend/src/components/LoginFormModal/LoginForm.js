@@ -2,14 +2,17 @@
 import React, { useState } from "react";
 import * as sessionActions from "../../store/session";
 import { useDispatch } from "react-redux";
+import './LoginForm.css'
 
-function LoginForm() {
+
+function LoginForm({setShowModal}) {
   const dispatch = useDispatch();
   const [credential, setCredential] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
     setErrors([]);
     return dispatch(sessionActions.login({ credential, password })).catch(
@@ -20,32 +23,58 @@ function LoginForm() {
     );
   };
 
+  const demoUserLogin = (e) => {
+    e.preventDefault();
+    dispatch(sessionActions.login({ credential: 'demo-user', password: 'password' }));
+    setShowModal(false);
+  }
+
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="login-form" onSubmit={handleSubmit}>
+      <h2 className="login-title">
+        Welcome to Airbb
+      </h2>
       <ul>
         {errors.map((error, idx) => (
           <li key={idx}>{error}</li>
         ))}
       </ul>
-      <label>
-        Username or Email
-        <input
-          type="text"
-          value={credential}
-          onChange={(e) => setCredential(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Password
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      <button type="submit">Log In</button>
+
+      <div>
+        <label className="user-login">
+
+          <input
+            type="text"
+            value={credential}
+            onChange={(e) => setCredential(e.target.value)}
+            placeholder="Username or E-mail"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <label className="user-password">
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
+        </label>
+      </div>
+
+      <div>
+        <button type="submit" className="login-buttons">Continue</button>
+      </div>
+
+      <div>
+        <button onCLick={demoUserLogin} className="login-buttons">Demo User</button>
+      </div>
+
     </form>
   );
 }
