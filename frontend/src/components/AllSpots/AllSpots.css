@@ -1,0 +1,58 @@
+.main-container{
+    margin-top: 20px;
+}
+
+.spot-card{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.spot-card-contents {
+    text-decoration: none;
+    color:black;
+    margin: auto;
+}
+
+.image-container {
+    width: 300px;
+    height: 300px
+}
+
+.allspots-image {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 25px;
+}
+
+.spot-card-details {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.spot-card-details-text p {
+    margin: 5px
+}
+
+.city-state {
+    font-weight: 600;
+}
+
+.allspots-country {
+    color: grey
+}
+
+.price{
+    font-weight: bold;
+}
+
+
+.avg-rating > p {
+    margin-top: 5px;
+}

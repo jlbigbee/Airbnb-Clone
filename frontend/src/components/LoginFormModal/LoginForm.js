@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import './LoginForm.css'
 
 
+
 function LoginForm({setShowModal}) {
   const dispatch = useDispatch();
   const [credential, setCredential] = useState("");
@@ -12,10 +13,11 @@ function LoginForm({setShowModal}) {
   const [errors, setErrors] = useState([]);
 
   const handleSubmit = (e) => {
-
     e.preventDefault();
     setErrors([]);
-    return dispatch(sessionActions.login({ credential, password })).catch(
+    return dispatch(sessionActions.login({ credential, password }))
+      .then(() => setShowModal(false))
+      .catch(
       async (res) => {
         const data = await res.json();
         if (data && data.errors) setErrors(data.errors);
@@ -23,14 +25,22 @@ function LoginForm({setShowModal}) {
     );
   };
 
+
   const demoUserLogin = (e) => {
-    e.preventDefault();
-    dispatch(sessionActions.login({ credential: 'demo-user', password: 'password' }));
-    setShowModal(false);
-  }
+		e.preventDefault();
+		return dispatch(
+			sessionActions.login({ credential: 'jbluebee', password: 'bigbeefs' }))
+			.then(() => setShowModal(false))
+			.catch(async (res) => {
+				const data = await res.json();
+				if (data && data.errors) setErrors(data.errors);
+			});
+	};
+
 
 
   return (
+    <div>
     <form className="login-form" onSubmit={handleSubmit}>
       <h2 className="login-title">
         Welcome to Airbb
@@ -71,11 +81,11 @@ function LoginForm({setShowModal}) {
         <button type="submit" className="login-buttons">Continue</button>
       </div>
 
-      <div>
-        <button onCLick={demoUserLogin} className="login-buttons">Demo User</button>
-      </div>
+
 
     </form>
+    <button onClick={demoUserLogin} className="login-buttons">Demo User</button>
+      </div>
   );
 }
 

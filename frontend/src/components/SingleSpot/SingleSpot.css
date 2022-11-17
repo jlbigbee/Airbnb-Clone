@@ -1,0 +1,97 @@
+.main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.outer-container {
+    max-width: 1000px;
+    margin: auto;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.spot-name {
+    font-size: larger;
+    margin-top: 30px;
+}
+
+.singlespot-images {
+    display: flex;
+    overflow: hidden;
+}
+
+.singlespot-image-container {
+    height: 300px
+}
+
+.singlespot-image {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 25px;
+}
+
+.singlespot-large-image {
+    object-fit: cover;
+    max-height: 510px;
+    max-width: 700px;
+    width: 50%;
+}
+
+.stars-reviews-location {
+    font-size: medium;
+    margin-top: -8px;
+    margin-bottom: 30px;
+}
+
+.review-count {
+    text-decoration: underline;
+}
+
+.city {
+    text-decoration: underline;
+}
+
+.state {
+    text-decoration: underline;
+}
+
+.country {
+    text-decoration: underline;
+}
+
+.under-image-details {
+    margin-top: 40px;
+    padding-bottom: 30px;
+    border-bottom: solid;
+    border-bottom-width: thin;
+    border-bottom-color: rgb(238, 235, 235);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.spot-price-container {
+    margin-top: 10px;
+}
+
+.spot-price span {
+    font-size: medium;
+}
+
+.spot-price {
+    margin-right: 10px;
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.description {
+    border-bottom: solid;
+    border-bottom-width: thin;
+    border-bottom-color: rgb(238, 235, 235);
+    padding-bottom: 30px;
+    margin-top: 10px;
+}
