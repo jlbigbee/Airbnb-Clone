@@ -19,8 +19,8 @@ module.exports = {
           {
             ownerId: 2,
             address: 'Socorro Sanchez 53',
-            city: 'Santo Domingo',
-            state: 'Santo Domingo',
+            city: 'Santa',
+            state: 'Domingo',
             country: 'Dominican Republic',
             lat: 18.46,
             lng: -69.90,
