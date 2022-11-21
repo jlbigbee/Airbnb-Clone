@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-
+import { NavLink } from "react-router-dom";
 import * as sessionActions from '../../store/session';
 import { Modal } from '../../context/Modal';
 import LoginForm from '../LoginFormModal/LoginForm';
@@ -62,16 +62,18 @@ function ProfileButton({ user }) {
             Sign Up
           </button>
         </div>
+        <NavLink to='/spots/create'>Create your own listing!</NavLink>
       </div>
     );
   } else {
     sessionLinks = (
       <div className="dropdown-menu">
-        <div className="profile-dropdown-text">Hello {user.firstName}</div>
+        <div className="profile-dropdown-text">Hello: {sessionUser.firstName}</div>
         <div className="profile-dropdown-text">Account: {user.email}</div>
         <div>
           <button className="logout-button" onClick={logout}>Log Out</button>
         </div>
+        <NavLink to='/spots/create'>Create your own listing!</NavLink>
       </div>
     )
   }

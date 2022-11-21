@@ -4,3 +4,15 @@
     font-family: Gill Sans, sans-serif
 
 }
+
+
+.footer-data{
+    padding: 2px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(144, 144, 144);
+    color: rgb(255, 255, 255);
+    text-align: center;
+}

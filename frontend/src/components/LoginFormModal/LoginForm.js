@@ -43,7 +43,7 @@ function LoginForm({setShowModal}) {
     <div>
     <form className="login-form" onSubmit={handleSubmit}>
       <h2 className="login-title">
-        Welcome to Airbb
+        Welcome to Airbb!
       </h2>
       <ul>
         {errors.map((error, idx) => (
@@ -81,10 +81,14 @@ function LoginForm({setShowModal}) {
         <button type="submit" className="login-buttons">Continue</button>
       </div>
 
+      <div>
+    <button onClick={demoUserLogin} className="login-buttons">Demo User</button>
+
+      </div>
+
 
 
     </form>
-    <button onClick={demoUserLogin} className="login-buttons">Demo User</button>
       </div>
   );
 }

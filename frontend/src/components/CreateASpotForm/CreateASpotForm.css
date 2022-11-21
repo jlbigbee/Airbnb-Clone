@@ -1,0 +1,32 @@
+.create-spot-form-container{
+    display: flex;
+    justify-content: center;
+}
+
+.create-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 800px;
+    width: 600px;
+
+}
+
+.create-spot-button {
+    margin-top: 20px;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+    height: 50px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(237, 0, 111);
+}
+
+.create-spot-button:hover {
+    cursor: pointer;
+}
+
+.create-spot-title {
+   text-align: center;
+}

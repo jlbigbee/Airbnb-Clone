@@ -1,0 +1,46 @@
+.spot-star-review-intro{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.submit-a-review-container{
+    margin-bottom: 50px;
+
+}
+
+.review-container{
+
+    padding-top: 20px;
+    padding-left: 10px;
+    justify-content: space-between;
+    height: 120px;
+    background-color: rgb(256,92,92,30%);
+    border-radius: 10px;
+    margin-bottom: 100px;
+
+}
+
+.review-remove-button-container{
+    margin-left:-8px
+}
+
+.user-rating{
+    padding-bottom: 10px;
+}
+
+.review-description{
+    padding-bottom: 10px;
+    font-style: italic ;
+}
+
+.review-remove-button{
+    margin-top:10px;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(237, 0, 111);
+
+}
