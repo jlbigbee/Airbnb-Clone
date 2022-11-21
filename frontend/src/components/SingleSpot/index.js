@@ -24,7 +24,7 @@ const SingleSpot = () => {
     },[])
 
     const removeSpot = () => {
-        const removedSpot =dispatch(removeASpot(spotId))
+        const removedSpot = dispatch(removeASpot(spotId))
         if (removeSpot) history.push('/');
     }
 
@@ -59,7 +59,7 @@ const SingleSpot = () => {
                 <div className="singlespot-images">
                         <div className="singlespot-large-image-container">
 
-                        <img className="singlespot-large-image" src={spot.spotImages ? spot.spotImages[0].url : null} />
+                        <img className="singlespot-large-image" src={spot.spotImages && spot.spotImages.length === 1 ? spot.spotImages[0].url : null} />
 
 
                     </div>
